@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<EnableDynamicLoading>true</EnableDynamicLoading>
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<EmbeddedResource Include="Views\**\*.cshtml" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Reference Include="Prototype.ModularMVC.App.Server">
+			<Private>false</Private>
+			<HintPath>..\Prototype.ModularMVC.App\Prototype.ModularMVC.App.Server\bin\Debug\net8.0\Prototype.ModularMVC.App.Server.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App">
+		</FrameworkReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Views\Example\Index.cshtml">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+</Project>

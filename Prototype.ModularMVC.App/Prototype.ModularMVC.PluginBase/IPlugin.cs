@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Prototype.ModularMVC.App.Server.PluginBase;
+namespace Prototype.ModularMVC.PluginBase;
 
 /// <summary>
-/// Base interface for all plugins for <see cref="Prototype.ModularMVC.App.Server"/>
+/// Interface for all plugins
 /// </summary>
 public interface IPlugin
 {
@@ -30,5 +30,5 @@ public interface IPlugin
     /// <summary>
     /// For each plugin, this method is called to configure <see cref="WebApplicationBuilder"/>
     /// </summary>
-    WebApplicationBuilder ConfigureWebApplicationBuilder(WebApplicationBuilder application);
+    WebApplicationBuilder ConfigureWebApplicationBuilder(WebApplicationBuilder builder);
 }

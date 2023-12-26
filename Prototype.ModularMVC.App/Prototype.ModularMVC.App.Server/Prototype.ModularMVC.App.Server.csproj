@@ -17,4 +17,8 @@
 		<Folder Include="Controllers\ViewControllers\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Prototype.ModularMVC.PluginBase\Prototype.ModularMVC.PluginBase.csproj" />
+	</ItemGroup>
+
 </Project>

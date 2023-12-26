@@ -1,12 +1,33 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Prototype.ModularMVC.App.Server.PluginBase;
-
-internal static class PluginLoader
+namespace Prototype.ModularMVC.PluginBase;
+public interface IPluginLoader
 {
-    public static IEnumerable<IPlugin> LoadPlugins(string pluginDirectory)
+    /// <summary>
+    /// The directory where the plugins are located
+    /// </summary>
+    string LookupDirectory { get; }
+
+    /// <summary>
+    /// Loads all plugins from the plugin directory
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable{IPlugin}"/> of instanciated <see cref="IPlugin"/></returns>
+    IEnumerable<IPlugin> LoadPlugins();
+}
+
+
+/*
+ 
+ public string PluginDirectory { get; }
+
+    public IEnumerable<IPlugin> LoadPlugins()
     {
-        string[] pluginPaths = GetPluginPaths(pluginDirectory);
+        string[] pluginPaths = GetPluginPaths(PluginDirectory);
 
         List<IPlugin> plugins = new();
 
@@ -23,7 +44,7 @@ internal static class PluginLoader
         return plugins;
     }
 
-    internal static string[] GetPluginPaths(string pluginDirectory)
+    public string[] GetPluginPaths(string pluginDirectory)
     {
         var dllFiles = Directory.GetFiles(pluginDirectory, "*.dll", SearchOption.AllDirectories);
         var paths = new string[dllFiles.Length];
@@ -36,7 +57,7 @@ internal static class PluginLoader
         return paths;
     }
 
-    internal static Assembly LoadPluginAssembly(string path)
+    public static Assembly LoadPluginAssembly(string path)
     {
         try
         {
@@ -60,34 +81,5 @@ internal static class PluginLoader
         IPlugin result = Activator.CreateInstance(types.First()) as IPlugin;
         return result;
     }
-}
 
-internal static class PluginLoaderExtensions
-{
-    /// <summary>
-    /// This method passes down <see cref="WebApplicationBuilder"/> to every <see cref="IPlugin"/> in <paramref name="plugins"/>
-    /// </summary>
-    /// <returns><see cref="WebApplicationBuilder"/></returns>
-    internal static WebApplicationBuilder ConfigureWebApplicationBuilder(this WebApplicationBuilder builder, IEnumerable<IPlugin> plugins)
-    {
-        foreach (IPlugin plugin in plugins)
-        {
-            builder = plugin.ConfigureWebApplicationBuilder(builder);
-        }
-        return builder;
-    }
-
-    /// <summary>
-    /// This method passes down <see cref="WebApplication"/> to every <see cref="IPlugin"/> in <paramref name="plugins"/>
-    /// </summary>
-    /// <returns><see cref="WebApplicationBuilder"/></returns>
-    internal static WebApplication ConfigureWebApplication(this WebApplication app, IEnumerable<IPlugin> plugins)
-    {
-        foreach (IPlugin plugin in plugins)
-        {
-            app = plugin.ConfigureWebApplication(app);
-        }
-        return app;
-    }
-}
-
+ */

@@ -15,7 +15,7 @@
 	<ItemGroup>
 		<Reference Include="Prototype.ModularMVC.App.Server">
 			<Private>false</Private>
-			<HintPath>..\Prototype.ModularMVC.App\Prototype.ModularMVC.App.Server\bin\Debug\net8.0\Prototype.ModularMVC.App.Server.dll</HintPath>
+			<HintPath>..\Prototype.ModularMVC.App\Prototype.ModularMVC.PluginBase\bin\Debug\net8.0\Prototype.ModularMVC.PluginBase.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 

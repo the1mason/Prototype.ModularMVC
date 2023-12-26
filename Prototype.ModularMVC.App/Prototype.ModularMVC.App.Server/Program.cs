@@ -1,4 +1,5 @@
-using Prototype.ModularMVC.App.Server.PluginBase;
+using Prototype.ModularMVC.PluginBase;
+using Prototype.ModularMVC.PluginBase.Impl;
 using Serilog;
 
 namespace Prototype.ModularMVC.App.Server;
@@ -14,21 +15,17 @@ public class Program
 
         var pluginDirectory = Path.Combine(Environment.CurrentDirectory, "Plugins");
 
-
         if (!Directory.Exists(pluginDirectory))
             Directory.CreateDirectory(pluginDirectory);
 
-        IEnumerable<IPlugin> plugins = PluginLoader.LoadPlugins(pluginDirectory);
+        IPluginLoader pluginLoader = new PluginLoader(pluginDirectory);
+        IEnumerable<IPlugin> plugins = pluginLoader.LoadPlugins();
 
         var builder = WebApplication.CreateBuilder(args);
-
+        
         builder.ConfigureWebApplicationBuilder(plugins);
 
-
-        // Add services to the container.
         builder.Services.AddControllersWithViews();
-
-        // Add Razor Runtime Compilation services
         builder.Services.AddRazorPages();
 
         var app = builder.Build();
@@ -53,5 +50,34 @@ public class Program
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
         app.Run();
+    }
+}
+
+public static class PluginLoaderExtensions
+{
+    /// <summary>
+    /// This method passes down <see cref="WebApplicationBuilder"/> to every <see cref="IPlugin"/> in <paramref name="plugins"/>
+    /// </summary>
+    /// <returns><see cref="WebApplicationBuilder"/></returns>
+    public static WebApplicationBuilder ConfigureWebApplicationBuilder(this WebApplicationBuilder builder, IEnumerable<IPlugin> plugins)
+    {
+        foreach (IPlugin plugin in plugins)
+        {
+            builder = plugin.ConfigureWebApplicationBuilder(builder);
+        }
+        return builder;
+    }
+
+    /// <summary>
+    /// This method passes down <see cref="WebApplication"/> to every <see cref="IPlugin"/> in <paramref name="plugins"/>
+    /// </summary>
+    /// <returns><see cref="WebApplicationBuilder"/></returns>
+    public static WebApplication ConfigureWebApplication(this WebApplication app, IEnumerable<IPlugin> plugins)
+    {
+        foreach (IPlugin plugin in plugins)
+        {
+            app = plugin.ConfigureWebApplication(app);
+        }
+        return app;
     }
 }

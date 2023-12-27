@@ -1,0 +1,7 @@
+﻿{
+  "id": "prototype.modularmvc.exampleplugin",
+  "version": "0.0.1",
+  "name": "Example Plugin",
+  "assembly": "Prototype.ModularMVC.ExamplePlugin.dll",
+  "dependencies": []
+}

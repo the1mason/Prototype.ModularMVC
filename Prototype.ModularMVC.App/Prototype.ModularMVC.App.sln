@@ -5,7 +5,9 @@ VisualStudioVersion = 17.9.34310.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prototype.ModularMVC.App.Server", "Prototype.ModularMVC.App.Server\Prototype.ModularMVC.App.Server.csproj", "{B25FEA68-2F78-4730-9546-63DE0233B0FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prototype.ModularMVC.PluginBase", "Prototype.ModularMVC.PluginBase\Prototype.ModularMVC.PluginBase.csproj", "{07C1CB45-ADBB-4728-B0AB-4535128FAD60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prototype.ModularMVC.PluginBase", "Prototype.ModularMVC.PluginBase\Prototype.ModularMVC.PluginBase.csproj", "{07C1CB45-ADBB-4728-B0AB-4535128FAD60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prototype.ModularMVC.Hooks", "Prototype.ModularMVC.Hooks\Prototype.ModularMVC.Hooks.csproj", "{75646B61-78BF-4747-BB78-DA50B1A2F28A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{07C1CB45-ADBB-4728-B0AB-4535128FAD60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07C1CB45-ADBB-4728-B0AB-4535128FAD60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07C1CB45-ADBB-4728-B0AB-4535128FAD60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75646B61-78BF-4747-BB78-DA50B1A2F28A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75646B61-78BF-4747-BB78-DA50B1A2F28A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75646B61-78BF-4747-BB78-DA50B1A2F28A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75646B61-78BF-4747-BB78-DA50B1A2F28A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

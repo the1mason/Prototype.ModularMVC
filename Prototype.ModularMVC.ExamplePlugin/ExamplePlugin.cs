@@ -15,8 +15,6 @@ public class ExamplePlugin : IPlugin
 
     public string Version => "0.0.1";
 
-    public string ViewDirectory => "";
-
     public WebApplication ConfigureWebApplication(WebApplication application)
     {
         return application;
@@ -26,6 +24,7 @@ public class ExamplePlugin : IPlugin
     {
         application.Services.AddControllersWithViews()
             .AddApplicationPart(typeof(ExamplePlugin).Assembly);
+
         return application;
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Prototype.ModularMVC.App.Server.Models;
+using Prototype.ModularMVC.PluginBase;
 using System.Diagnostics;
 
 namespace Prototype.ModularMVC.App.Server.Controllers;

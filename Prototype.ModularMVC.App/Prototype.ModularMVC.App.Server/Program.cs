@@ -18,7 +18,7 @@ public class Program
         if (!Directory.Exists(pluginDirectory))
             Directory.CreateDirectory(pluginDirectory);
 
-        IPluginLoader pluginLoader = new PluginLoader(pluginDirectory);
+        IPluginLoader pluginLoader = new ManifestBasedPluginLoader(pluginDirectory);
         IEnumerable<IPlugin> plugins = pluginLoader.LoadPlugins();
 
         var builder = WebApplication.CreateBuilder(args);

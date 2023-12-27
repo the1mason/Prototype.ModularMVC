@@ -6,12 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App">
-		</FrameworkReference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Serilog" Version="3.1.1" />
-	</ItemGroup>
 </Project>

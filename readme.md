@@ -90,8 +90,24 @@ public class ExamplePlugin : IPlugin
     }
 ```
 
+#### Important
+
+The plugin project file should target `Microsoft.NET.Sdk.Razor` SDK (not class library). Otherwise, plugin's views won't be compiled.  
+
+To exclude PluginBase dependency from the plugin's output, add `<Private>false</Private>` to the PluginBase reference in the plugin's project file.
+
+Also, to access WebApplication and WebApplicationBuilder, the plugin should reference `Microsoft.AspNetCore.App` framework:
+
+```xml
+<ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App">
+	</FrameworkReference>
+</ItemGroup>
+```
+
 ## Server
 
+The server is an ASP.NET MVC application that references the PluginBase. It contains a `Program` class, which loads plugins from a directory and registers them.
 
 ```csharp
 
@@ -132,3 +148,7 @@ public static class PluginLoaderExtensions
     }
 }
 ```
+
+### Other
+
+Huge thanks to [Paul Braetz](https://github.com/PaulBraetz) for help :)

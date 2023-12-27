@@ -13,7 +13,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<Reference Include="Prototype.ModularMVC.App.Server">
+		<Reference Include="Prototype.ModularMVC.PluginBase">
 			<Private>false</Private>
 			<HintPath>..\Prototype.ModularMVC.App\Prototype.ModularMVC.PluginBase\bin\Debug\net8.0\Prototype.ModularMVC.PluginBase.dll</HintPath>
 		</Reference>
@@ -25,6 +25,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="plugin.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>

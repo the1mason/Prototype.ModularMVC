@@ -15,11 +15,13 @@ public class ExampleController : Controller
     [Route("Index")]
     public IActionResult Index()
     {
-        var view = View();
-        view.ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary());
-        return view;
+        return View();
     }
 
+    /// <summary>
+    /// This action is used to check whether the views are being generated from the plugin.
+    /// </summary>
+    /// <returns></returns>
     [Route("Types")]
     public IActionResult Types()
     {

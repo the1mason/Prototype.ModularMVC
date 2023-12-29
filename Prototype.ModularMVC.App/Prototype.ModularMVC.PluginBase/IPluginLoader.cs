@@ -16,8 +16,8 @@ public interface IPluginLoader
     /// <summary>
     /// Loads all plugins from the plugin directory
     /// </summary>
-    /// <returns>An <see cref="IEnumerable{IPlugin}"/> of instanciated <see cref="IPlugin"/></returns>
-    IEnumerable<IPlugin> LoadPlugins();
+    /// <returns>An array of instanciated <see cref="IPlugin"/>s </returns>
+    IPlugin[] LoadPlugins();
 }
 
 

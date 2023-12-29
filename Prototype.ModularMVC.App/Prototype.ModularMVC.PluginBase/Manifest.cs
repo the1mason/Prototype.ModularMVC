@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Prototype.ModularMVC.PluginBase;
-internal class Manifest
+public class Manifest
 {
     [JsonRequired]
     public string Id { get; set; } = null!;
@@ -19,14 +19,7 @@ internal class Manifest
     public string? Website { get; set; }
     [JsonRequired]
     public string Assembly { get; set; } = null!;
-    public ManifestDependency[]? Dependencies { get; set; }
-}
 
-internal class ManifestDependency
-{
-    public string? Id { get; set; }
-    public string? Version { get; set; }
-
-    [JsonRequired]
-    public string Assembly { get; set; } = null!;
+    [JsonIgnore]
+    public string? Path { get; set; }
 }

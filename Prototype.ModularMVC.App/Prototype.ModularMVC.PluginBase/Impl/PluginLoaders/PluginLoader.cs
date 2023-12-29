@@ -2,13 +2,13 @@
 using Serilog;
 using System.Reflection;
 
-namespace Prototype.ModularMVC.PluginBase.Impl;
+namespace Prototype.ModularMVC.PluginBase.Impl.PluginLoaders;
 
 public sealed class PluginLoader(string lookupDirectory) : IPluginLoader
 {
     public string LookupDirectory { get; } = lookupDirectory;
 
-    public IEnumerable<IPlugin> LoadPlugins()
+    public IPlugin[] LoadPlugins()
     {
         string[] pluginPaths = GetPluginPaths(LookupDirectory);
 
@@ -24,7 +24,7 @@ public sealed class PluginLoader(string lookupDirectory) : IPluginLoader
                 plugins.Add(plugin);
         }
 
-        return plugins;
+        return [.. plugins];
     }
 
     #region Private Methods

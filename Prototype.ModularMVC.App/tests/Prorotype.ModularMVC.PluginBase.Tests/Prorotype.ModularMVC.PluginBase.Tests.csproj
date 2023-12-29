@@ -29,8 +29,4 @@
     <ProjectReference Include="..\..\Prototype.ModularMVC.PluginBase\Prototype.ModularMVC.PluginBase.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ManifestBasedPluginLoaderTests\" />
-  </ItemGroup>
-
 </Project>

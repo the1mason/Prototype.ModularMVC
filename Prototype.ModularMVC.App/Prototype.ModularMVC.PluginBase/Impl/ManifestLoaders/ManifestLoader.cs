@@ -22,11 +22,11 @@ public class ManifestLoader : IManifestLoader
 
     public List<Manifest> LoadManifests()
     {
-        var manifestPath = _fileSystem.Directory.GetFiles(LookupDirectory, "plugin.json", SearchOption.AllDirectories);
+        var manifestsPath = _fileSystem.Directory.GetFiles(LookupDirectory, "plugin.json", SearchOption.AllDirectories);
 
         List<Manifest> manifests = [];
 
-        foreach (var path in manifestPath)
+        foreach (var path in manifestsPath)
         {
             Manifest? manifest = LoadManifest(path);
             if (manifest != null)

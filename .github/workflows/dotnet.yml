@@ -21,12 +21,12 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore server
-      run: dotnet restore .\Prototype.ModularMVC\Prototype.ModularMVC.App\Prototype.ModularMVC.App.sln
+      run: dotnet restore .\Prototype.ModularMVC.App\Prototype.ModularMVC.App.sln
     - name: Build server
-      run: dotnet build --no-restore .\Prototype.ModularMVC\Prototype.ModularMVC.App\Prototype.ModularMVC.App.sln
+      run: dotnet build --no-restore .\Prototype.ModularMVC.App\Prototype.ModularMVC.App.sln
     - name: Test server
-      run: dotnet test --no-build --verbosity normal .\Prototype.ModularMVC\Prototype.ModularMVC.App\Prototype.ModularMVC.App.sln
+      run: dotnet test --no-build --verbosity normal .\Prototype.ModularMVC.App\Prototype.ModularMVC.App.sln
     - name: Restore plugin
-      run: dotnet restore .\Prototype.ModularMVC\Prototype.ModularMVC.ExamplePlugin\Prototype.ModularMVC.ExamplePlugin.sln
+      run: dotnet restore .\Prototype.ModularMVC.ExamplePlugin\Prototype.ModularMVC.ExamplePlugin.sln
     - name: Build plugin
-      run: dotnet build --no-restore .\Prototype.ModularMVC\Prototype.ModularMVC.ExamplePlugin\Prototype.ModularMVC.ExamplePlugin.sln
+      run: dotnet build --no-restore .\Prototype.ModularMVC.ExamplePlugin\Prototype.ModularMVC.ExamplePlugin.sln

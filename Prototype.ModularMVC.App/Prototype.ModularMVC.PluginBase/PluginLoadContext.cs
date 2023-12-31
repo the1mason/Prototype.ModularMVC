@@ -7,7 +7,7 @@ public class PluginLoadContext : AssemblyLoadContext
 {
     private AssemblyDependencyResolver _resolver;
 
-    public PluginLoadContext(string pluginPath)
+    public PluginLoadContext(string pluginPath, bool isUnloadable = false) : base(isUnloadable)
     {
         _resolver = new AssemblyDependencyResolver(pluginPath);
     }

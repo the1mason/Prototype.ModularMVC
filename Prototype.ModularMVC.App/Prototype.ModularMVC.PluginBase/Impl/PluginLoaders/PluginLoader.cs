@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Prototype.ModularMVC.PluginBase.PluginLoaders;
 using Serilog;
 using System.Reflection;
 

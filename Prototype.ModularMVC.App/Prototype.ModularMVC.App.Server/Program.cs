@@ -1,6 +1,7 @@
 using Prototype.ModularMVC.PluginBase;
 using Prototype.ModularMVC.PluginBase.Impl.ManifestLoaders;
 using Prototype.ModularMVC.PluginBase.Impl.PluginLoaders;
+using Prototype.ModularMVC.PluginBase.PluginLoaders;
 using Serilog;
 using System.IO.Abstractions;
 
@@ -20,12 +21,14 @@ public class Program
         if (!Directory.Exists(pluginDirectory))
             Directory.CreateDirectory(pluginDirectory);
 
-        IPluginLoader pluginLoader = new ManifestBasedPluginLoader(new FileSystem(),new ManifestLoader(pluginDirectory, new FileSystem()));
+        IPluginLoader pluginLoader = new ManifestBasedPluginLoader(new FileSystem(),new ManifestLoader(pluginDirectory, new FileSystem()), pluginDirectory);
 
         IEnumerable<IPlugin> plugins = pluginLoader.LoadPlugins();
 
         var builder = WebApplication.CreateBuilder(args);
-        
+
+        builder.Services.AddSingleton(plugins);
+
         builder.ConfigureWebApplicationBuilder(plugins);
 
         builder.Services.AddControllersWithViews();

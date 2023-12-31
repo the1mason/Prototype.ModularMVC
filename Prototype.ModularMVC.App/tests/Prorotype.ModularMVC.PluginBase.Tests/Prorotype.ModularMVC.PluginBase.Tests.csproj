@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="20.0.4" />
     <PackageReference Include="xunit" Version="2.6.4" />
     <PackageReference Include="xunit.extensibility.core" Version="2.6.4" />
@@ -27,6 +28,48 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Prototype.ModularMVC.PluginBase\Prototype.ModularMVC.PluginBase.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="resources\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.BrokenPlugin.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.BrokenPlugin.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.BrokenPlugin.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.BrokenPlugin.runtimeconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.DepdPlugin.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.DepdPlugin.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.DepdPlugin.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.DepdPlugin.runtimeconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.PluginNoDepds.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.PluginNoDepds.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.PluginNoDepds.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\Prototype.ModularMVC.TestResources.PluginNoDepds.runtimeconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

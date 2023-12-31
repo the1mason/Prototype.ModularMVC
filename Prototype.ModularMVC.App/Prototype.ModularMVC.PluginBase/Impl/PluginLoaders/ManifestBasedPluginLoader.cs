@@ -1,5 +1,6 @@
 ﻿using Prototype.ModularMVC.PluginBase.Exceptions;
 using Prototype.ModularMVC.PluginBase.Impl.ManifestLoaders;
+using Prototype.ModularMVC.PluginBase.PluginLoaders;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -14,17 +15,31 @@ using System.Xml.Linq;
 
 namespace Prototype.ModularMVC.PluginBase.Impl.PluginLoaders;
 
-
-public class ManifestBasedPluginLoader(IFileSystem fileSystem, IManifestLoader manifestLoader) : IPluginLoader
+/// <summary>
+/// Uses <see cref="IManifestLoader"/> to load manifests, then loads plugins from them.
+/// </summary>
+public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
 {
-    public string LookupDirectory { get; } = manifestLoader.LookupDirectory;
+    public string LookupDirectory { get; }
+    private List<PluginLoadContext> _loadedContexts = [];
+    public bool IsUnloadable;
+    private readonly IFileSystem _fileSystem;
+    private readonly IManifestLoader _manifestLoader;
+
+    public ManifestBasedPluginLoader(IFileSystem fileSystem, IManifestLoader manifestLoader, string lookupDirectory, bool isUnloadable = false)
+    {
+        _fileSystem = fileSystem;
+        _manifestLoader = manifestLoader;
+        LookupDirectory = lookupDirectory;
+        IsUnloadable = isUnloadable;
+    }
 
     public IPlugin[] LoadPlugins()
     {
-        var manifests = manifestLoader.LoadManifests();
+        var manifests = _manifestLoader.LoadManifests();
 
-        if (manifests.Any())
-            return Array.Empty<IPlugin>();
+        if (manifests.Count != 0)
+            return [];
 
         List<Assembly> pluginAssemblies = [];
 
@@ -37,7 +52,6 @@ public class ManifestBasedPluginLoader(IFileSystem fileSystem, IManifestLoader m
             catch (PluginLoadException ex)
             {
                 Log.Warning(ex, "Failed to load plugin {PluginName}, skipping!", manifest.Name);
-                continue;
             }
         }
 
@@ -57,7 +71,7 @@ public class ManifestBasedPluginLoader(IFileSystem fileSystem, IManifestLoader m
 
     private Assembly LoadPluginAssembly(Manifest manifest)
     {
-        if (fileSystem.File.Exists(manifest.Assembly))
+        if (_fileSystem.File.Exists(manifest.Assembly))
         {
             throw new FileNotFoundException("Plugin manifest file does not exist.", manifest.Path);
         }
@@ -84,6 +98,16 @@ public class ManifestBasedPluginLoader(IFileSystem fileSystem, IManifestLoader m
             return null;
         IPlugin? result = Activator.CreateInstance(types.First()) as IPlugin;
         return result;
+    }
+
+    public void UnloadAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Unload(string id)
+    {
+        throw new NotImplementedException();
     }
     #endregion
 }

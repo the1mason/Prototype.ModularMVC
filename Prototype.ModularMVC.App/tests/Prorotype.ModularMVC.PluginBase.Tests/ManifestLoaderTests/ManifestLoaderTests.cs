@@ -33,7 +33,6 @@ public class ManifestLoaderTests
 
         // Arrange
         var mockFileData = new MockFileData(MANIFEST);
-        _mockFileSystem.AddDirectory(MANIFEST_DIRECTORY);
         _mockFileSystem.AddFile(MANIFEST_PATH, mockFileData);
 
         // Act
@@ -55,7 +54,6 @@ public class ManifestLoaderTests
 
         // Arrange
         var mockFileData = new MockFileData(MANIFEST);
-        _mockFileSystem.AddDirectory(MANIFEST_DIRECTORY);
         _mockFileSystem.AddFile(MANIFEST_PATH, mockFileData);
 
         // Act
@@ -202,7 +200,6 @@ public class ManifestLoaderTests
         }";
 
         // Arrange
-        _mockFileSystem.AddDirectory(MANIFEST_DIRECTORY);
         _mockFileSystem.AddFile(MANIFEST_DIRECTORY + "/notplugin.json", MANIFEST);
 
         // Act
@@ -225,7 +222,6 @@ public class ManifestLoaderTests
 
         // Arrange
         var mockFileData = new MockFileData(MANIFEST);
-        _mockFileSystem.AddDirectory(MANIFEST_DIRECTORY);
         _mockFileSystem.AddFile(MANIFEST_PATH, mockFileData);
 
         // Act

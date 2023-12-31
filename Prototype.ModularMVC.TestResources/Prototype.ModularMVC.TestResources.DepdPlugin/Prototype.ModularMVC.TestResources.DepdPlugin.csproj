@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+		<EnableDynamicLoading>true</EnableDynamicLoading>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Prototype.ModularMVC.PluginBase">
+			<Private>false</Private>
+			<HintPath>..\..\Prototype.ModularMVC.App\Prototype.ModularMVC.PluginBase\bin\Debug\net8.0\Prototype.ModularMVC.PluginBase.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+</Project>

@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Prototype.ModularMVC.PluginBase.Impl.PluginLoaders;
 public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
 {
     public string LookupDirectory { get; }
-    private List<PluginLoadContext> _loadedContexts = [];
+    private List<AssemblyLoadContext> _loadedContexts = [];
     public bool IsUnloadable;
     private readonly IFileSystem _fileSystem;
     private readonly IManifestLoader _manifestLoader;
@@ -38,7 +39,7 @@ public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
     {
         var manifests = _manifestLoader.LoadManifests();
 
-        if (manifests.Count != 0)
+        if (manifests.Count == 0)
             return [];
 
         List<Assembly> pluginAssemblies = [];
@@ -71,17 +72,19 @@ public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
 
     private Assembly LoadPluginAssembly(Manifest manifest)
     {
-        if (_fileSystem.File.Exists(manifest.Assembly))
+        if (!_fileSystem.File.Exists(manifest.Assembly))
         {
-            throw new FileNotFoundException("Plugin manifest file does not exist.", manifest.Path);
+            throw new FileNotFoundException("Plugin manifest file does not exist.", manifest.Assembly);
         }
 
         try
         {
-            PluginLoadContext loadContext = new(manifest.Assembly);
-            return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(manifest.Assembly)));
+            PluginLoadContext loadContext = new(manifest.Assembly, IsUnloadable);
+            Assembly pluginAssembly = loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(manifest.Assembly)));
+            _loadedContexts.Add(loadContext);
+            return pluginAssembly;
         }
-        catch (Exception ex)
+         catch (Exception ex)
         {
             Log.Warning(ex, "Failed to load assembly {path}", manifest.Assembly);
             // One of plugin's assemblies failed to load, so we can't load the plugin.
@@ -90,24 +93,71 @@ public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
     }
     private static IPlugin? CreatePlugin(Assembly assembly)
     {
-        var types = assembly.GetTypes().Where(t => typeof(IPlugin).IsAssignableFrom(t));
-        int count = types.Count();
-        if (count > 1)
-            throw new ApplicationException($"Found more than 1 type, implementing IPlugin in assembly {assembly.FullName}");
-        if (count < 1)
+        try
+        {
+            var types = assembly.GetTypes().Where(t => typeof(IPlugin).IsAssignableFrom(t)).ToArray();
+            if (types.Length > 1)
+                throw new ApplicationException($"Found more than 1 type, implementing IPlugin in assembly {assembly.FullName}");
+            if (types.Length < 1)
+                return null;
+            IPlugin? result = Activator.CreateInstance(types.First()) as IPlugin;
+            return result;
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            Log.Warning(ex, "Failed to load plugin {PluginName}, skipping!", assembly.FullName);
             return null;
-        IPlugin? result = Activator.CreateInstance(types.First()) as IPlugin;
-        return result;
+        }
     }
 
     public void UnloadAll()
     {
-        throw new NotImplementedException();
+        List<WeakReference> assemblies = [];
+        foreach (var context in _loadedContexts)
+        {
+            assemblies.AddRange(context?.Assemblies.Select(x => new WeakReference(x))!);
+            context?.Unload();
+        }
+
+        foreach (var assembly in assemblies)
+        {
+            if (TryWaitUntilUnloaded(assembly))
+                continue;
+
+            Log.Warning("Failed to unload plugin context!");
+        }
     }
 
-    public void Unload(string id)
+    static void WaitUntilAllDies(List<AssemblyLoadContext> contexts)
     {
-        throw new NotImplementedException();
+        var references = contexts
+            .SelectMany(static context => context.Assemblies)
+            .Select(static assembly => new WeakReference(assembly))
+            .ToList();
+
+        contexts.ForEach(static context => context.Unload());
+        contexts.Clear();
+
+        foreach (var reference in references)
+        {
+            if (!TryWaitUntilUnloaded(reference))
+            {
+                Log.Warning("Could not unload assembly");
+            }
+        }
+    }
+
+    static bool TryWaitUntilUnloaded(WeakReference reference)
+    {
+        const int infiniteLoopGuard = 10;
+
+        for (var i = 0; reference.IsAlive && i < infiniteLoopGuard; i++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
+        return !reference.IsAlive;
     }
     #endregion
 }

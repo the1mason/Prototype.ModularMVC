@@ -15,10 +15,4 @@ public interface IUnloadablePluginLoader : IPluginLoader
     /// Unloads all <see cref="IPlugin"/>s.
     /// </summary>
     void UnloadAll();
-
-    /// <summary>
-    /// Unloads an <see cref="IPlugin"/> based on <see cref="IPlugin.Name"/>.
-    /// </summary>
-    /// <param name="id"></param>
-    void Unload(string id);
 }

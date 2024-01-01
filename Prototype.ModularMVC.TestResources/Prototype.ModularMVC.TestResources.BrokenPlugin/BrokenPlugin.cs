@@ -6,7 +6,6 @@ public class BrokenPlugin : IPlugin
 {
     public string Id => "prototype.test-resources.broken-plugin";
     public string Name => "Broken Plugin";
-
     public WebApplication ConfigureWebApplication(WebApplication application)
     {
         throw new NotImplementedException("Plugin is not intended to be loaded");

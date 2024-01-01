@@ -21,7 +21,6 @@ public interface IPlugin
     /// Version of <see cref="IPlugin"/>. Used to check for updates.
     /// </summary>
     string Version { get; }
-
     /// <summary>
     /// For each plugin, this method is called to configure <see cref="WebApplication"/>
     /// </summary>

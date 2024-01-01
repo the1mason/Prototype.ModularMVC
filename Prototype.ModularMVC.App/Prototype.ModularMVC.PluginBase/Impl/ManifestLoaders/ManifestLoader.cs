@@ -20,7 +20,7 @@ public class ManifestLoader : IManifestLoader
         _fileSystem = fileSystem;
     }
 
-    public List<Manifest> LoadManifests()
+    public virtual List<Manifest> LoadManifests()
     {
         var manifestsPath = _fileSystem.Directory.GetFiles(LookupDirectory, "plugin.json", SearchOption.AllDirectories);
 

@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Prorotype.ModularMVC.PluginBase.Tests.ManifestBasedPluginLoaderTests;
-public class ManifestBasedPluginLoaderTests
+public class ManifestBasedPluginLoaderTests : IDisposable
 {
     private readonly IFileSystem _fileSystem;
     private readonly ManifestLoader _manifestLoader;
@@ -27,7 +27,7 @@ public class ManifestBasedPluginLoaderTests
             Name = "PluginNoDepds",
             Version = "0.1",
             Description = "Plugin without dependencies",
-            Assembly = "Prototype.ModularMVC.TestResources.PluginNoDepds.dll"
+            Assembly = "resources/Prototype.ModularMVC.TestResources.PluginNoDepds.dll"
         },
         new()
         {
@@ -35,7 +35,7 @@ public class ManifestBasedPluginLoaderTests
             Name = "DepdPlugin",
             Version = "0.2",
             Description = "Plugin with a Newtonsoft.JSON dependency",
-            Assembly = "Prototype.ModularMVC.TestResources.DepdPlugin.dll"
+            Assembly = "resources/Prototype.ModularMVC.TestResources.DepdPlugin.dll"
         },
         new()
         {
@@ -43,27 +43,34 @@ public class ManifestBasedPluginLoaderTests
             Name = "Broken Plugin",
             Version = "0.3",
             Description = "Plugin that doesn't fully implements IPlugin",
-            Assembly = "Prototype.ModularMVC.TestResources.BrokenPlugin.dll"
-        },
+            Assembly = "resources/Prototype.ModularMVC.TestResources.BrokenPlugin.dll"
+        }
     };
 
     public ManifestBasedPluginLoaderTests()
     {
-        _fileSystem = new MockFileSystem();
+        // I am using real file system because the AssemblyLoadContext
+        // references the Path static class under the hood.
+        // For now I don't consider even trying to redo the AssemblyLoadContext,
+        // and even then I was copying the files from the real file system anyways.
+        // Let's stick a #wontfix on this one.
+        _fileSystem = new FileSystem();
 
-        _manifestLoader = Substitute.For<ManifestLoader>();
+        _manifestLoader = Substitute.For<ManifestLoader>("./", _fileSystem);
 
         _manifestLoader.LoadManifests().Returns(manifests);
 
-        _manifestLoader.LoadManifest(Arg.Any<string>()).Returns(
-            id => manifests.FirstOrDefault(x => x.Id == id.Arg<string>()));
+        _pluginLoader = new ManifestBasedPluginLoader(_fileSystem, _manifestLoader, MANIFEST_DIRECTORY, true);
+    }
 
-        _pluginLoader = new ManifestBasedPluginLoader(_fileSystem, _manifestLoader, MANIFEST_DIRECTORY);
+    public void Dispose()
+    {
+        _pluginLoader.UnloadAll();
     }
 
     #region LoadPlugins Tests
 
-    /*[Fact]
+    [Fact]
     public void LoadPlugins_ShouldReturnEmptyList_WhenNoPluginsAreFound()
     {
         // Arrange
@@ -80,7 +87,7 @@ public class ManifestBasedPluginLoaderTests
     public void LoadPlugins_ShouldNotReturnPlugins_WhenPluginsAreBroken()
     {
         // Arrange
-        _manifestLoader.LoadManifests().Returns([manifests[3]]);
+        _manifestLoader.LoadManifests().Returns([manifests[2]]);
 
         // Act
         IEnumerable<IPlugin> result = _pluginLoader.LoadPlugins();
@@ -120,7 +127,7 @@ public class ManifestBasedPluginLoaderTests
         // Assert
         Assert.Contains(result, x => x.Id == "prototype.test-resources.plugin-with-dependency");
 
-        Assert.Equal("DepdPlugin", result.First().Name); // Name property for this plugin uses Newtonsoft.JSON dependency.
+        Assert.Equal("DepdPlugin", result.First(x => x.Id == "prototype.test-resources.plugin-with-dependency").Name); // Name property for this plugin uses Newtonsoft.JSON dependency.
     }
 
     [Fact]
@@ -131,7 +138,7 @@ public class ManifestBasedPluginLoaderTests
 
         // Assert
         Assert.Contains(result, x => x.Id == "prototype.test-resources.plugin-without-dependencies");
-    }*/
+    }
 
     #endregion
 }

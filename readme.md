@@ -14,7 +14,7 @@ Self-hosted applications, including open source ones, have a wide range of users
 
 ## Requirements
 
-Develipers should be able to extend application's functionality by creating plugins.
+Developers should be able to extend application's functionality by creating plugins.
 
 Plugins should be able to extend site's functionality both on the client and server side.
 
@@ -154,3 +154,4 @@ public static class PluginLoaderExtensions
 ### Other
 
 Huge thanks to [Paul Braetz](https://github.com/PaulBraetz) for help :)
+Even bigger thanks to Left2Dotnet from the C# discord server

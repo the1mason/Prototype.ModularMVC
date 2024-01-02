@@ -5,9 +5,13 @@ VisualStudioVersion = 17.9.34310.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prototype.ModularMVC.TestResources.PluginNoDepds", "Prototype.ModularMVC.TestResources.PluginNoDepds\Prototype.ModularMVC.TestResources.PluginNoDepds.csproj", "{3C8E208A-89E4-4A8B-9D99-89A2AFD80DE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prototype.ModularMVC.TestResources.DepdPlugin", "Prototype.ModularMVC.TestResources.DepdPlugin\Prototype.ModularMVC.TestResources.DepdPlugin.csproj", "{275428B1-1D39-43F7-A1EF-9F270BB99F0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prototype.ModularMVC.TestResources.DepdPlugin", "Prototype.ModularMVC.TestResources.DepdPlugin\Prototype.ModularMVC.TestResources.DepdPlugin.csproj", "{275428B1-1D39-43F7-A1EF-9F270BB99F0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prototype.ModularMVC.TestResources.BrokenPlugin", "Prototype.ModularMVC.TestResources.BrokenPlugin\Prototype.ModularMVC.TestResources.BrokenPlugin.csproj", "{E2EE3856-AAD7-42D9-91B2-3FC392E93A5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prototype.ModularMVC.TestResources.BrokenPlugin", "Prototype.ModularMVC.TestResources.BrokenPlugin\Prototype.ModularMVC.TestResources.BrokenPlugin.csproj", "{E2EE3856-AAD7-42D9-91B2-3FC392E93A5E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prototype.ModularMVC.TestResources.MultipleIPlugins", "Prototype.ModularMVC.TestResources.MultipleIPlugins\Prototype.ModularMVC.TestResources.MultipleIPlugins.csproj", "{05E63CBE-1D07-4B73-8EEB-9040BF24EFF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prototype.ModularMVC.TestResources.NoIPlugin", "Prototype.ModularMVC.TestResources.NoIPlugin\Prototype.ModularMVC.TestResources.NoIPlugin.csproj", "{3F99E00D-F4C4-47F4-99AC-5BECB21437A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{E2EE3856-AAD7-42D9-91B2-3FC392E93A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2EE3856-AAD7-42D9-91B2-3FC392E93A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2EE3856-AAD7-42D9-91B2-3FC392E93A5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05E63CBE-1D07-4B73-8EEB-9040BF24EFF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05E63CBE-1D07-4B73-8EEB-9040BF24EFF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05E63CBE-1D07-4B73-8EEB-9040BF24EFF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05E63CBE-1D07-4B73-8EEB-9040BF24EFF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F99E00D-F4C4-47F4-99AC-5BECB21437A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F99E00D-F4C4-47F4-99AC-5BECB21437A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F99E00D-F4C4-47F4-99AC-5BECB21437A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F99E00D-F4C4-47F4-99AC-5BECB21437A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

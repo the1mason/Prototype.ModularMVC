@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "Prototype.ModularMVC.TestResources.NoIPlugin/1.0.0": {
+        "runtime": {
+          "Prototype.ModularMVC.TestResources.NoIPlugin.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Prototype.ModularMVC.TestResources.NoIPlugin/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

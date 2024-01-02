@@ -23,7 +23,7 @@ public class ManifestLoaderTests
     #region LoadManifest Tests
 
     [Fact]
-    public void LoadManifest_ShouldReturnNull_WhenRequiredFieldIsMissing()
+    public void LoadManifest_WhenRequiredFieldIsMissing_ShouldReturnNull()
     {
         const string MANIFEST = @"{
                 ""name"": ""Test Plugin"",
@@ -43,7 +43,7 @@ public class ManifestLoaderTests
     }
 
     [Fact]
-    public void LoadManifest_ShouldReturnNull_WhenManifestIsInvalid()
+    public void LoadManifest_WhenManifestIsInvalid_ShouldReturnNull()
     {
         const string MANIFEST = @"{
                 ""id"" ""test.plugin"",
@@ -64,7 +64,7 @@ public class ManifestLoaderTests
     }
 
     [Fact]
-    public void LoadManifest_ShouldThrowException_WhenFileNotFount()
+    public void LoadManifest_WhenFileNotFount_ShouldThrowException()
     {
         // Arrange
         _mockFileSystem.AddDirectory(MANIFEST_PATH);
@@ -78,7 +78,7 @@ public class ManifestLoaderTests
 
 
     [Fact]
-    public void LoadManifest_ShouldReturnManifest_WhenOnlyRequiredFieldsArePresent()
+    public void LoadManifest_WhenOnlyRequiredFieldsArePresent_ShouldReturnManifest()
     {
 
         const string MANIFEST = @"{
@@ -107,7 +107,7 @@ public class ManifestLoaderTests
     }
 
     [Fact]
-    public void LoadManifest_ShouldReturnManifest_WhenAllFieldsArePresent()
+    public void LoadManifest_WhenAllFieldsArePresent_ShouldReturnManifest()
     {
 
         const string MANIFEST = @"{
@@ -140,7 +140,7 @@ public class ManifestLoaderTests
     }
 
     [Fact]
-    public void LoadManifest_ShouldReturnManifest_WhenContainsUnusedFields()
+    public void LoadManifest_WhenContainsUnusedFields_ShouldReturnManifest()
     {
 
         const string MANIFEST = @"{
@@ -175,7 +175,7 @@ public class ManifestLoaderTests
     #region LoadManifests Tests
 
     [Fact]
-    public void LoadManifests_ShouldReturnEmptyList_WhenNoManifestsFound()
+    public void LoadManifests_WhenNoManifestsFound_ShouldReturnEmptyList()
     {
         // Arrange
         _mockFileSystem.AddDirectory(MANIFEST_DIRECTORY);
@@ -190,7 +190,7 @@ public class ManifestLoaderTests
 
 
     [Fact]
-    public void LoadManifests_ShouldReturnEmptyList_WhenManifestsHaveWrongNames()
+    public void LoadManifests_WhenManifestsHaveWrongNames_ShouldReturnEmptyList()
     {
         const string MANIFEST = @"{
             ""id"": ""test.plugin"",
@@ -211,7 +211,7 @@ public class ManifestLoaderTests
     }
 
     [Fact]
-    public void LoadManifests_ShouldReturnManifests_WhenManifestsArePresent()
+    public void LoadManifests_WhenManifestsArePresent_ShouldReturnManifests()
     {
         const string MANIFEST = @"{
             ""id"": ""test.plugin"",

@@ -17,8 +17,6 @@ public class ManifestBasedPluginLoaderTests : IDisposable
     private readonly ManifestLoader _manifestLoader;
     private readonly ManifestBasedPluginLoader _pluginLoader;
 
-    const string MANIFEST_DIRECTORY = "ExamplePlugin";
-
     private readonly List<Manifest> manifests = new()
     {
         new()
@@ -27,7 +25,8 @@ public class ManifestBasedPluginLoaderTests : IDisposable
             Name = "PluginNoDepds",
             Version = "0.1",
             Description = "Plugin without dependencies",
-            Assembly = "resources/Prototype.ModularMVC.TestResources.PluginNoDepds.dll"
+            Assembly = "resources/Prototype.ModularMVC.TestResources.PluginNoDepds.dll",
+            Path = "./"
         },
         new()
         {
@@ -35,7 +34,8 @@ public class ManifestBasedPluginLoaderTests : IDisposable
             Name = "DepdPlugin",
             Version = "0.2",
             Description = "Plugin with a Newtonsoft.JSON dependency",
-            Assembly = "resources/Prototype.ModularMVC.TestResources.DepdPlugin.dll"
+            Assembly = "resources/Prototype.ModularMVC.TestResources.DepdPlugin.dll",
+            Path = "./"
         },
         new()
         {
@@ -43,7 +43,26 @@ public class ManifestBasedPluginLoaderTests : IDisposable
             Name = "Broken Plugin",
             Version = "0.3",
             Description = "Plugin that doesn't fully implements IPlugin",
-            Assembly = "resources/Prototype.ModularMVC.TestResources.BrokenPlugin.dll"
+            Assembly = "resources/Prototype.ModularMVC.TestResources.BrokenPlugin.dll",
+            Path = "./"
+        },
+        new()
+        {
+            Id = "prototype.test-resources.multiple-one",
+            Name = "MultipleOne",
+            Version = "0.4",
+            Description = "Plugin that has multiple implementations of IPlugin",
+            Assembly = "resources/Prototype.ModularMVC.TestResources.MultipleIPlugins.dll",
+            Path = "./"
+        },
+        new()
+        {
+            Id = "prototype.test-resources.no-plugin",
+            Name = "NotAPlugin",
+            Version = "0.5",
+            Description = "Plugin that has no implementations of IPlugin",
+            Assembly = "resources/Prototype.ModularMVC.TestResources.NoIPlugin.dll",
+            Path = "./"
         }
     };
 
@@ -60,7 +79,7 @@ public class ManifestBasedPluginLoaderTests : IDisposable
 
         _manifestLoader.LoadManifests().Returns(manifests);
 
-        _pluginLoader = new ManifestBasedPluginLoader(_fileSystem, _manifestLoader, MANIFEST_DIRECTORY, true);
+        _pluginLoader = new ManifestBasedPluginLoader(_fileSystem, _manifestLoader, true);
     }
 
     public void Dispose()
@@ -71,7 +90,7 @@ public class ManifestBasedPluginLoaderTests : IDisposable
     #region LoadPlugins Tests
 
     [Fact]
-    public void LoadPlugins_ShouldReturnEmptyList_WhenNoPluginsAreFound()
+    public void LoadPlugins_WhenNoPluginsAreFound_ShouldReturnEmptyList()
     {
         // Arrange
         _manifestLoader.LoadManifests().Returns([]);
@@ -84,21 +103,7 @@ public class ManifestBasedPluginLoaderTests : IDisposable
     }
 
     [Fact]
-    public void LoadPlugins_ShouldNotReturnPlugins_WhenPluginsAreBroken()
-    {
-        // Arrange
-        _manifestLoader.LoadManifests().Returns([manifests[2]]);
-
-        // Act
-        IEnumerable<IPlugin> result = _pluginLoader.LoadPlugins();
-
-        // Assert
-        Assert.Empty(result);
-    }
-
-
-    [Fact]
-    public void LoadPlugins_ShouldExcludeBrokenPluginsFromResult_WhenSomePluginsAreBroken()
+    public void LoadPlugins_WhenPluginImplementationIsBroken_ShouldNotReturnPlugin()
     {
         // Act
         IEnumerable<IPlugin> result = _pluginLoader.LoadPlugins();
@@ -108,7 +113,27 @@ public class ManifestBasedPluginLoaderTests : IDisposable
     }
 
     [Fact]
-    public void LoadPlugins_ShouldReturnPlugins_WhenPluginsAreFound()
+    public void LoadPlugins_WhenPluginsHaveMultipleImplementationsOfIPlugin_ShouldNotReturnPlugin()
+    {
+        // Act
+        IEnumerable<IPlugin> result = _pluginLoader.LoadPlugins();
+
+        // Assert
+        Assert.DoesNotContain(result, x => x.Id == "prototype.test-resources.multiple-one");
+    }
+
+    [Fact]
+    public void LoadPlugins_WhenPluginsHaveNoImplementationsOfIPlugin_ShouldNotReturnPlugin()
+    {
+        // Act
+        IEnumerable<IPlugin> result = _pluginLoader.LoadPlugins();
+
+        // Assert
+        Assert.DoesNotContain(result, x => x.Id == "prototype.test-resources.no-plugin");
+    }
+
+    [Fact]
+    public void LoadPlugins_WhenPluginsAreFound_ShouldReturnValidPlugins()
     {
         // Act
         IEnumerable<IPlugin> result = _pluginLoader.LoadPlugins();
@@ -119,26 +144,27 @@ public class ManifestBasedPluginLoaderTests : IDisposable
     }
 
     [Fact]
-    public void LoadPlugins_ShouldLoadPlugins_WhenPluginsHaveDependencies()
+    public void LoadPlugins_WhenPluginsHaveDependencies_ShouldLoadPlugins()
     {
         // Act
         IEnumerable<IPlugin> result = _pluginLoader.LoadPlugins();
 
         // Assert
-        Assert.Contains(result, x => x.Id == "prototype.test-resources.plugin-with-dependency");
-
+        Assert.Single(result, x => x.Id == "prototype.test-resources.plugin-with-dependency");
         Assert.Equal("DepdPlugin", result.First(x => x.Id == "prototype.test-resources.plugin-with-dependency").Name); // Name property for this plugin uses Newtonsoft.JSON dependency.
     }
 
     [Fact]
-    public void LoadPlugins_ShouldLoadPlugins_WhenPluginsHaveNoDependencies()
+    public void LoadPlugins_WhenPluginsHaveNoDependencies_ShouldLoadPlugins()
     {
         // Act
         IEnumerable<IPlugin> result = _pluginLoader.LoadPlugins();
+        _manifestLoader.LoadManifests().Returns([manifests[0]]);
 
         // Assert
         Assert.Contains(result, x => x.Id == "prototype.test-resources.plugin-without-dependencies");
     }
+
 
     #endregion
 }

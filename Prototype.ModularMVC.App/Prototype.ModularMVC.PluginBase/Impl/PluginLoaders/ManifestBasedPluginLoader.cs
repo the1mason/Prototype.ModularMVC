@@ -21,17 +21,15 @@ namespace Prototype.ModularMVC.PluginBase.Impl.PluginLoaders;
 /// </summary>
 public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
 {
-    public string LookupDirectory { get; }
     private List<AssemblyLoadContext> _loadedContexts = [];
     public bool IsUnloadable;
     private readonly IFileSystem _fileSystem;
     private readonly IManifestLoader _manifestLoader;
 
-    public ManifestBasedPluginLoader(IFileSystem fileSystem, IManifestLoader manifestLoader, string lookupDirectory, bool isUnloadable = false)
+    public ManifestBasedPluginLoader(IFileSystem fileSystem, IManifestLoader manifestLoader, bool isUnloadable = false)
     {
         _fileSystem = fileSystem;
         _manifestLoader = manifestLoader;
-        LookupDirectory = lookupDirectory;
         IsUnloadable = isUnloadable;
     }
 
@@ -57,12 +55,19 @@ public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
         }
 
         List<IPlugin> plugins = [];
-
         foreach (var pluginAssembly in pluginAssemblies)
         {
-            IPlugin? plugin = CreatePlugin(pluginAssembly);
-            if (plugin != null)
-                plugins.Add(plugin);
+            try
+            {
+                IPlugin? plugin = CreatePlugin(pluginAssembly);
+                if (plugin != null)
+                    plugins.Add(plugin);
+            }
+            catch (ApplicationException ex)
+            {
+                Log.Warning(ex.Message);
+                continue;
+            }
         }
 
         return [.. plugins];
@@ -72,9 +77,10 @@ public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
 
     private Assembly LoadPluginAssembly(Manifest manifest)
     {
-        if (!_fileSystem.File.Exists(manifest.Assembly))
+        var path = Directory.GetParent(manifest.Path) + "/" + manifest.Assembly;
+        if (!_fileSystem.File.Exists(path))
         {
-            throw new FileNotFoundException("Plugin manifest file does not exist.", manifest.Assembly);
+            throw new FileNotFoundException("Plugin manifest file does not exist.", path);
         }
 
         try

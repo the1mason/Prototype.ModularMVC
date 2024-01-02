@@ -1,6 +1,7 @@
 # C# Web application with plugin system
 
-![Dotnet Workflow](https://github.com/the1mason/Prototype.ModularMVC/actions/workflows/dotnet.yml/badge.svg)
+![Dotnet Workflow](https://github.com/the1mason/Prototype.ModularMVC/actions/workflows/dotnet-build.yml/badge.svg)
+![Dotnet Workflow](https://github.com/the1mason/Prototype.ModularMVC/actions/workflows/dotnet-test.yml/badge.svg)
 
 This project is a proof of concept. I wanted to create an ASP.NET MVC app with plugin system. Plugins can contain views and controllers, which allows to extend the app without recompiling it.
 

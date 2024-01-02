@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore server
+      run: dotnet restore ./Prototype.ModularMVC.App/Prototype.ModularMVC.App.sln
+    - name: Build server
+      run: dotnet build --no-restore ./Prototype.ModularMVC.App/Prototype.ModularMVC.App.sln
+    - name: Restore plugin
+      run: dotnet restore ./Prototype.ModularMVC.ExamplePlugin/Prototype.ModularMVC.ExamplePlugin.sln
+    - name: Build plugin
+      run: dotnet build --no-restore ./Prototype.ModularMVC.ExamplePlugin/Prototype.ModularMVC.ExamplePlugin.sln

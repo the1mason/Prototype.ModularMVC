@@ -1,5 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Prototype.ModularMVC.App.Server.Models;
+using Prototype.ModularMVC.Hooks;
+using Prototype.ModularMVC.Hooks.Args;
+using Prototype.ModularMVC.Hooks.Impl.Args;
+using Prototype.ModularMVC.Hooks.Impl.Hooks;
+using Prototype.ModularMVC.Hooks.Impl.Publishers;
 using Prototype.ModularMVC.PluginBase;
 using System.Diagnostics;
 
@@ -7,9 +12,11 @@ namespace Prototype.ModularMVC.App.Server.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IServiceProvider _serviceProvider;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IServiceProvider serviceProvider)
     {
+        _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
@@ -22,9 +29,17 @@ public class HomeController : Controller
     {
         return View();
     }
+
     public IActionResult Types()
     {
         return Ok(GetType().Assembly.GetTypes().Select(x => x.FullName).ToArray());
+    }
+
+    public IActionResult ExampleHook()
+    {
+        var trigger = _serviceProvider.GetRequiredService<CancellableTrigger<IExampleHook>>();
+        var resultArgs = trigger.Execute((hook, args) => hook.OnMessageRequested(args as ExampleHookArgs), new ExampleHookArgs());
+        return Ok((resultArgs as ExampleHookArgs).Messages.ToArray());
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

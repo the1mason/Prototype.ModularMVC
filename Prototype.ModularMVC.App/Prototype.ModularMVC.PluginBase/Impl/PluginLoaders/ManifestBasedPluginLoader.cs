@@ -19,12 +19,12 @@ namespace Prototype.ModularMVC.PluginBase.Impl.PluginLoaders;
 /// <summary>
 /// Uses <see cref="IManifestLoader"/> to load manifests, then loads plugins from them.
 /// </summary>
-public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
+public sealed class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
 {
-    private List<AssemblyLoadContext> _loadedContexts = [];
     public bool IsUnloadable;
-    private readonly IFileSystem _fileSystem;
-    private readonly IManifestLoader _manifestLoader;
+    List<AssemblyLoadContext> _loadedContexts = [];
+    readonly IFileSystem _fileSystem;
+    readonly IManifestLoader _manifestLoader;
 
     public ManifestBasedPluginLoader(IFileSystem fileSystem, IManifestLoader manifestLoader, bool isUnloadable = false)
     {
@@ -75,29 +75,29 @@ public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
 
     #region Private Methods
 
-    private Assembly LoadPluginAssembly(Manifest manifest)
+    Assembly LoadPluginAssembly(Manifest manifest)
     {
-        var path = Directory.GetParent(manifest.Path) + "/" + manifest.Assembly;
+        var path = Directory.GetParent(manifest.Path!) + "/" + manifest.Assembly;
+
         if (!_fileSystem.File.Exists(path))
         {
-            throw new FileNotFoundException("Plugin manifest file does not exist.", path);
+            throw new FileNotFoundException("Plugin assembly file does not exist.", path);
         }
 
         try
         {
-            PluginLoadContext loadContext = new(manifest.Assembly, IsUnloadable);
+            PluginLoadContext loadContext = new(path, IsUnloadable);
             Assembly pluginAssembly = loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(manifest.Assembly)));
             _loadedContexts.Add(loadContext);
             return pluginAssembly;
         }
          catch (Exception ex)
         {
-            Log.Warning(ex, "Failed to load assembly {path}", manifest.Assembly);
-            // One of plugin's assemblies failed to load, so we can't load the plugin.
-            throw new PluginLoadException("Tried to load plugin assembly, but failed.", manifest.Assembly, ex);
+            Log.Warning(ex, "Failed to load assembly {path}", path);
+            throw new PluginLoadException("Tried to load plugin assembly, but failed.", path, ex);
         }
     }
-    private static IPlugin? CreatePlugin(Assembly assembly)
+    static IPlugin? CreatePlugin(Assembly assembly)
     {
         try
         {
@@ -118,6 +118,9 @@ public class ManifestBasedPluginLoader : IPluginLoader, IUnloadablePluginLoader
 
     public void UnloadAll()
     {
+        if(!IsUnloadable)
+            throw new InvalidOperationException("This plugin loader is not unloadable!");
+
         List<WeakReference> assemblies = [];
         foreach (var context in _loadedContexts)
         {

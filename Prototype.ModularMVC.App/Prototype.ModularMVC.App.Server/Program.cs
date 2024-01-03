@@ -1,3 +1,8 @@
+using Prototype.ModularMVC.App.Server.Hooks;
+using Prototype.ModularMVC.Hooks;
+using Prototype.ModularMVC.Hooks.Args;
+using Prototype.ModularMVC.Hooks.Impl.Hooks;
+using Prototype.ModularMVC.Hooks.Impl.Publishers;
 using Prototype.ModularMVC.PluginBase;
 using Prototype.ModularMVC.PluginBase.Impl.ManifestLoaders;
 using Prototype.ModularMVC.PluginBase.Impl.PluginLoaders;
@@ -28,11 +33,16 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddSingleton(plugins);
-
+        
+        builder.ConfigureTriggers();
+        builder.ConfigureDefaultHooks();
+        
         builder.ConfigureWebApplicationBuilder(plugins);
 
         builder.Services.AddControllersWithViews();
+
         builder.Services.AddRazorPages();
+
 
         var app = builder.Build();
 
@@ -59,13 +69,10 @@ public class Program
     }
 }
 
-public static class PluginLoaderExtensions
+internal static class PluginLoaderExtensions
 {
-    /// <summary>
-    /// This method passes down <see cref="WebApplicationBuilder"/> to every <see cref="IPlugin"/> in <paramref name="plugins"/>
-    /// </summary>
-    /// <returns><see cref="WebApplicationBuilder"/></returns>
-    public static WebApplicationBuilder ConfigureWebApplicationBuilder(this WebApplicationBuilder builder, IEnumerable<IPlugin> plugins)
+
+    internal static WebApplicationBuilder ConfigureWebApplicationBuilder(this WebApplicationBuilder builder, IEnumerable<IPlugin> plugins)
     {
         foreach (IPlugin plugin in plugins)
         {
@@ -74,16 +81,26 @@ public static class PluginLoaderExtensions
         return builder;
     }
 
-    /// <summary>
-    /// This method passes down <see cref="WebApplication"/> to every <see cref="IPlugin"/> in <paramref name="plugins"/>
-    /// </summary>
-    /// <returns><see cref="WebApplicationBuilder"/></returns>
-    public static WebApplication ConfigureWebApplication(this WebApplication app, IEnumerable<IPlugin> plugins)
+
+    internal static WebApplication ConfigureWebApplication(this WebApplication app, IEnumerable<IPlugin> plugins)
     {
         foreach (IPlugin plugin in plugins)
         {
             app = plugin.ConfigureWebApplication(app);
         }
         return app;
+    }
+
+    internal static WebApplicationBuilder ConfigureTriggers(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<CancellableTrigger<IExampleHook>>();
+        return builder;
+    }
+
+    internal static WebApplicationBuilder ConfigureDefaultHooks(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IExampleHook, ExampleHook>();
+        builder.Services.AddScoped<IExampleHook, ExampleHook2>();
+        return builder;
     }
 }

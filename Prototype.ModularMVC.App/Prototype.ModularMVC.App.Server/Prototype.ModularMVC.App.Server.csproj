@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Prototype.ModularMVC.Hooks\Prototype.ModularMVC.Hooks.csproj" />
 	  <ProjectReference Include="..\Prototype.ModularMVC.PluginBase\Prototype.ModularMVC.PluginBase.csproj" />
 	</ItemGroup>
 

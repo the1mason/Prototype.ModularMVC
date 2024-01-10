@@ -1,8 +1,6 @@
-using Prototype.ModularMVC.App.Server.Hooks;
-using Prototype.ModularMVC.Hooks;
 using Prototype.ModularMVC.Hooks.Args;
-using Prototype.ModularMVC.Hooks.Impl.Hooks;
-using Prototype.ModularMVC.Hooks.Impl.Publishers;
+using Prototype.ModularMVC.Hooks.Impl.Triggers;
+using Prototype.ModularMVC.Hooks.Triggers;
 using Prototype.ModularMVC.PluginBase;
 using Prototype.ModularMVC.PluginBase.Impl.ManifestLoaders;
 using Prototype.ModularMVC.PluginBase.Impl.PluginLoaders;
@@ -35,7 +33,6 @@ public class Program
         builder.Services.AddSingleton(plugins);
         
         builder.ConfigureTriggers();
-        builder.ConfigureDefaultHooks();
         
         builder.ConfigureWebApplicationBuilder(plugins);
 
@@ -54,18 +51,24 @@ public class Program
             app.UseHsts();
         }
 
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
+        // Example of hook trigger usage :)
+        var webAppHookArgs = new WebAppConfiguringHookArgs(app);
 
-        app.UseRouting();
+        webAppHookArgs.Actions.Add(app => app.UseStaticFiles());
+        webAppHookArgs.Actions.Add(app => app.UseRouting());
+        webAppHookArgs.Actions.Add(app => app.UseAuthorization());
+        webAppHookArgs.Actions.Add(app =>
+            app.MapControllerRoute(
+                name: "default", pattern: "{controller=Home}/{action=Index}/{id?}"));
 
-        app.UseAuthorization();
+        var trigger = app.Services.GetRequiredService<WebAppTrigger>();
+        trigger.ExecuteOnConfiguring(webAppHookArgs);
 
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}");
+        webAppHookArgs.Configure();
 
-        app.Run();
+        app.RunAsync();
+
+        trigger.ExecuteOnStarted(new WebAppHookArgs(app));
     }
 }
 
@@ -93,14 +96,7 @@ internal static class PluginLoaderExtensions
 
     internal static WebApplicationBuilder ConfigureTriggers(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<CancellableTrigger<IExampleHook>>();
-        return builder;
-    }
-
-    internal static WebApplicationBuilder ConfigureDefaultHooks(this WebApplicationBuilder builder)
-    {
-        builder.Services.AddScoped<IExampleHook, ExampleHook>();
-        builder.Services.AddScoped<IExampleHook, ExampleHook2>();
+        builder.Services.AddSingleton<IWebAppTrigger, WebAppTrigger>();
         return builder;
     }
 }

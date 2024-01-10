@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 		<Folder Include="Controllers\ViewControllers\" />
+		<Folder Include="Hooks\" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Builder;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Prototype.ModularMVC.Hooks.Args;
-public interface ICancellableHookArgs
+public interface IWebAppHookArgs
 {
-    bool IsCancelled { get; set; }
+    WebApplication App { get; set; }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Prototype.ModularMVC.Hooks;
-public interface IHook
+public interface ICancellableHook : IHook
 {
-    byte Priority { get; }
+    bool Cancelled { get; set; }
 }

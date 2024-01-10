@@ -2,9 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Prototype.ModularMVC.App.Server.Models;
 using Prototype.ModularMVC.Hooks;
 using Prototype.ModularMVC.Hooks.Args;
-using Prototype.ModularMVC.Hooks.Impl.Args;
-using Prototype.ModularMVC.Hooks.Impl.Hooks;
-using Prototype.ModularMVC.Hooks.Impl.Publishers;
 using Prototype.ModularMVC.PluginBase;
 using System.Diagnostics;
 
@@ -33,13 +30,6 @@ public class HomeController : Controller
     public IActionResult Types()
     {
         return Ok(GetType().Assembly.GetTypes().Select(x => x.FullName).ToArray());
-    }
-
-    public IActionResult ExampleHook()
-    {
-        var trigger = _serviceProvider.GetRequiredService<CancellableTrigger<IExampleHook>>();
-        var resultArgs = trigger.Execute((hook, args) => hook.OnMessageRequested(args as ExampleHookArgs), new ExampleHookArgs());
-        return Ok((resultArgs as ExampleHookArgs).Messages.ToArray());
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -155,4 +155,4 @@ public static class PluginLoaderExtensions
 ### Other
 
 Huge thanks to [Paul Braetz](https://github.com/PaulBraetz) for help :)  
-Even bigger thanks to Left2Dotnet from the C# discord server
+Even bigger thanks to [Left2Dotnet](https://github.com/asylkhan-azat) from the C# discord server

@@ -7,7 +7,8 @@ This project is a proof of concept. I wanted to create an ASP.NET MVC app with p
 
 ### Disclaimer
 
-First of all, this is a prototype, which means that it's architecture is not producion ready. This kind of plugin-based application would need a rich event system, load priority for plugins, and lots of other important features. But you can still use it as a starting point (I sure will).
+First of all, this is a prototype, which means that it's architecture is not as producion ready as it could have been, but you can still use it as a starting point (I sure will). As of right now this application lacks dependency resolving for plugins, any authenticion, etc.. 
+I have another project on [my gitea](https://git.the1mason.com/the1mason/OctoCore), which is a WIP web app, based on this prototype.
 
 ## Whys'
 
@@ -28,11 +29,16 @@ Using transpiled languages for the cliend is not an option, because the client w
 This repository contains the following solutions:
 
 - Prototype.ModularMVC.App - the server itself and plugin base.
-- Prototype.ModularMVC.ExamplePlugin - a sample plugin.
+  - PluginBase - the base dependency that any plugin should be built upon
+  - tests/Prorotype.ModularMVC.PluginBase.Tests - unit tests for PluginBase
+  - Hooks - an event system, more on that below
+  - Server - MVC project that servs as a core of this web app
+- Prototype.ModularMVC.ExamplePlugin - a sample plugin that adds a controller with a view, located at /Example/Index
+- Prototype.ModularMVC.TestResources - a set of plugins, made for testing plugin loader. I have compiled them already and put in `resources` folder of the test project, so there is no need to build those.
 
 ## PluginBase
 
-The plugin base is a class library that contains interfaces and classes that are used by the server and plugins. It is referenced by the server and plugins. 
+It contains the base interface for a plugin (IPlugin) and an interface and an implementation for a plugin loader.
 
 ```csharp
 
@@ -51,14 +57,13 @@ public interface IPlugin
 
 ```
 
-It also contains an IPluginLoader interface and a PluginLoader class, which is used by the server to load plugins.
 
 ```csharp
 public interface IPluginLoader
 {
     string LookupDirectory { get; }
 
-    IEnumerable<IPlugin> LoadPlugins();
+    IPlugin[] LoadPlugins();
 }
 
 ```
@@ -84,7 +89,7 @@ public class ExamplePlugin : IPlugin
     {
         return application;
     }
-
+    // this method allows the plugin to setup the app and configure the DI container
     public WebApplicationBuilder ConfigureWebApplicationBuilder(WebApplicationBuilder application)
     {
         application.Services.AddControllersWithViews()
@@ -99,7 +104,7 @@ The plugin project file should target `Microsoft.NET.Sdk.Razor` SDK (not class l
 
 To exclude PluginBase dependency from the plugin's output, add `<Private>false</Private>` to the PluginBase reference in the plugin's project file.
 
-Also, to access WebApplication and WebApplicationBuilder, the plugin should reference `Microsoft.AspNetCore.App` framework:
+Also, to access ASP.NET-related classes, the plugin should reference `Microsoft.AspNetCore.App` framework:
 
 ```xml
 <ItemGroup>
@@ -108,51 +113,100 @@ Also, to access WebApplication and WebApplicationBuilder, the plugin should refe
 </ItemGroup>
 ```
 
-## Server
+## Hooks and Triggers
 
-The server is an ASP.NET MVC application that references the PluginBase. It contains a `Program` class, which loads plugins from a directory and registers them.
+It is a custom event system. I haven't used the built-in `event` keyword because of a need in custom iteration logic for executing events.    
+
+#### Hook definition
+
+`hook` is a class in plugin's library, that implements `ISomeHook` with some handling method:  
 
 ```csharp
 
-using Prototype.ModularMVC.PluginBase;
-using Prototype.ModularMVC.PluginBase.Impl;
-
-public class Program
+// Hook Interface
+public interface ISomeHook : IHook
 {
-    public static void Main(string[] args)
-    {
-        // ...
-
-        var pluginDirectory = Path.Combine(Environment.CurrentDirectory, "Plugins");
-
-        if (!Directory.Exists(pluginDirectory)) // Ensure that the plugin directory exists
-            Directory.CreateDirectory(pluginDirectory);
-
-        IPluginLoader pluginLoader = new PluginLoader(pluginDirectory);
-        IEnumerable<IPlugin> plugins = pluginLoader.LoadPlugins();
-
-        var builder = WebApplication.CreateBuilder(args);
-        
-        builder.ConfigureWebApplicationBuilder(plugins);
-
-        // ...
-    }
+    void Some_ExecuteSomething(SomethingHookArgs args);
 }
 
-public static class PluginLoaderExtensions
-{
-    public static WebApplicationBuilder ConfigureWebApplicationBuilder(this WebApplicationBuilder builder, IEnumerable<IPlugin> plugins)
-    {
-        foreach (IPlugin plugin in plugins)
-        {
-            builder = plugin.ConfigureWebApplicationBuilder(builder);
-        }
-        return builder;
-    }
-}
 ```
+
+#### Hook implementation
+
+A subscriber's class should implement `ISomeHook` and be registred as `ISomeHook` implementation in a DI container:  
+
+```csharp
+
+public SomePluginService : ISomePluginService, ISomeHook
+{
+    // ... ISomePluginServiceImplementation ...//
+    // ...
+
+    // ISomeHook implementation
+    void Some_ExecuteSomething(SomethingHookArgs args)
+    {
+        args.SomeField = "someNewValue";
+    }
+}
+
+
+```
+
+```csharp
+
+// In IPlugin
+
+public WebApplicationBuilder ConfigureWebApplicationBuilder(WebApplicationBuilder application)
+    {
+	// Adding ISomePluginService
+        application.Services.AddScoped<ISomePluginService>();
+	// then making sure to return the same ISomePluginService instance for each hook type that it implements
+	application.Services.AddScoped<ISomeHook>(x => x.GetRequiredService<ISomePluginService>();
+        return application;
+    }
+
+```
+
+#### Triggering registered hooks
+
+As you can see, different plugins are implementing the same IHook, which results multiple implementations of the same interface. That's how a trigger executes all hooks:
+
+```csharp
+
+public class SomeTrigger : ISomeTrigger
+{
+
+    private readonly IServiceProvider _serviceProvider;
+
+    public SomeTrigger(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+
+    public void ExecuteSome(SomeHookArgs args)
+    {
+        var hooks = _serviceProvider.GetServices<ISomeHook>();
+	// iterating through all subscribed hooks
+        foreach (var hook in hooks.OrderByDescending(x => x.Priority))
+        {
+            if (hook.Cancelled)
+                break;
+
+            hook.Some_ExecuteSomething(args); // executing the subsibed hook's action
+        }
+    }
+
+}
+
+```
+
+## Conclusion
+
+This might look a little overcomplicated, but if you approach it from a plugin developer perspective, you just have to implement some interfaces and register some stuff in the DI container!  
+I like the result and am goint to continue to iterate over it's design in my non-prototype project.
 
 ### Other
 
 Huge thanks to [Paul Braetz](https://github.com/PaulBraetz) for help :)  
-Even bigger thanks to [Left2Dotnet](https://github.com/asylkhan-azat) from the C# discord server
+Even bigger thanks to [Asylkhan Azat](https://github.com/asylkhan-azat) from the C# discord server
